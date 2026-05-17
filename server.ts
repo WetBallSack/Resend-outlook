@@ -6,8 +6,8 @@ import { createClient } from "@supabase/supabase-js";
 import { Webhook } from "svix";
 
 // Initialize external clients
-const supabaseUrl = process.env.SUPABASE_URL || "https://example.supabase.co";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "mock-key";
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://example.supabase.co";
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "mock-key";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const resendApiKey = process.env.RESEND_API_KEY;
