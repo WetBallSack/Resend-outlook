@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+@layer base {
+  * {
+    @apply border-black/10;
+    }
+  body {
+    @apply bg-[#F5F4F0] text-[#1A1A1A];
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+.claud-html-render {
+  color: #1A1A1A;
+  font-family: var(--font-serif);
+}
+
+.claud-html-render p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.claud-html-render a {
+  color: #1A1A1A;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.claud-html-render ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.claud-html-render ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.claud-html-render blockquote {
+  border-left: 2px solid rgba(0,0,0,0.1);
+  padding-left: 1em;
+  color: rgba(0,0,0,0.6);
+  margin-bottom: 1em;
+  font-style: italic;
+}
+
+.claud-html-render img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}

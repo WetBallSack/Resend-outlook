@@ -1,0 +1,7 @@
+import { createClient } from "@supabase/supabase-js";
+
+// Make sure to set these in your .env or platform secrets
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://placeholder-url.supabase.co";
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "placeholder-key";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
