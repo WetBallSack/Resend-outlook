@@ -1,6 +1,8 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Epistle",
+  "description": "An elegant, minimalist email client with a conversational interface powered by Resend and Supabase.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

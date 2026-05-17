@@ -76,46 +76,42 @@ export default function App() {
   }, [activeThreadId, threads]);
 
   const fetchThreads = async () => {
-    // Fetch all emails to construct threads. In production, use the SQL View for efficiency.
-    const { data: emails, error } = await supabase
-      .from('emails')
-      .select('*')
-      .order('created_at', { ascending: true });
+    try {
+      const res = await fetch('/api/emails');
+      if (!res.ok) throw new Error('Failed to fetch emails');
+      const emails: Email[] = await res.json();
+      
+      if (!emails || emails.length === 0) return;
 
-    if (error) {
+      // Group by thread_id
+      const grouped = emails.reduce((acc: Record<string, Thread>, email: Email) => {
+        if (!acc[email.thread_id]) {
+          acc[email.thread_id] = {
+            threadId: email.thread_id,
+            subject: email.subject,
+            lastUpdated: email.created_at,
+            emails: []
+          };
+        }
+        acc[email.thread_id].emails.push(email);
+        // Update lastUpdated to newest
+        if (new Date(email.created_at) > new Date(acc[email.thread_id].lastUpdated)) {
+          acc[email.thread_id].lastUpdated = email.created_at;
+        }
+        return acc;
+      }, {});
+
+      const sortedThreads = Object.values(grouped).sort((a, b) => 
+        new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+      );
+
+      setThreads(sortedThreads);
+      
+      if (!activeThreadId && sortedThreads.length > 0) {
+        setActiveThreadId(sortedThreads[0].threadId);
+      }
+    } catch (error) {
       console.error("Error fetching emails:", error);
-      return;
-    }
-
-    if (!emails) return;
-
-    // Group by thread_id
-    const grouped = emails.reduce((acc: Record<string, Thread>, email: Email) => {
-      if (!acc[email.thread_id]) {
-        acc[email.thread_id] = {
-          threadId: email.thread_id,
-          subject: email.subject,
-          lastUpdated: email.created_at,
-          emails: []
-        };
-      }
-      acc[email.thread_id].emails.push(email);
-      // Update lastUpdated to newest
-      if (new Date(email.created_at) > new Date(acc[email.thread_id].lastUpdated)) {
-        acc[email.thread_id].lastUpdated = email.created_at;
-        // Keep subject updated based on most recent email if needed, but first is fine.
-      }
-      return acc;
-    }, {});
-
-    const sortedThreads = Object.values(grouped).sort((a, b) => 
-      new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
-    );
-
-    setThreads(sortedThreads);
-    
-    if (!activeThreadId && sortedThreads.length > 0) {
-      setActiveThreadId(sortedThreads[0].threadId);
     }
   };
 
@@ -207,7 +203,7 @@ export default function App() {
             <div className="w-8 h-8 bg-black text-white rounded-lg flex items-center justify-center shadow-inner">
               <Sparkles className="w-4 h-4" />
             </div>
-            <span className="font-semibold text-lg tracking-tight font-sans text-[#1A1A1A]">AuraPlot</span>
+            <span className="font-semibold text-lg tracking-tight font-sans text-[#1A1A1A]">Epistle</span>
           </div>
           <button 
             className="w-full flex items-center gap-3 px-4 py-2 bg-[#F5F4F0] border border-black/10 rounded-xl text-sm font-medium hover:bg-black/5 shadow-sm transition-colors text-[#1A1A1A]"
@@ -249,7 +245,7 @@ export default function App() {
         <div className="p-4 border-t border-black/10">
           <div className="flex items-center gap-3 px-1">
              <div className="w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center font-bold text-xs text-[#1A1A1A] tracking-wider">
-                AP
+                EP
              </div>
              <div className="flex-1 min-w-0">
                <div className="text-xs font-semibold truncate text-[#1A1A1A] font-sans">auraplot.site</div>
@@ -290,7 +286,7 @@ export default function App() {
                         </div>
                       </div>
                       <div className="w-8 h-8 rounded-full bg-[#E8E3DA] border border-black/10 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-[#1A1A1A] shadow-inner tracking-widest mt-1 uppercase">
-                        AP
+                        EP
                       </div>
                     </div>
                   ) : (

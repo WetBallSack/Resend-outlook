@@ -163,6 +163,24 @@ async function startServer() {
   // Or we can add an endpoint here. Let's do an endpoint so we don't expose ANON key if we don't want to,
   // but Supabase is meant for client queries. We will use the VITE_ envs on frontend.
 
+  app.get("/api/emails", async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { data: emails, error } = await supabase
+        .from('emails')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      res.status(200).json(emails);
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
